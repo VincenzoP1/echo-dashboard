@@ -12,6 +12,11 @@
 
   <title>Echo Dashboard</title>
 
+  <!-- KEEP SILK OPEN -->
+  <script defer
+    src="https://dagammla.gitlab.io/keep-silk-open/keep.js">
+  </script>
+
   <style>
 
     * {
@@ -32,11 +37,9 @@
       color: white;
 
       font-family: Arial, sans-serif;
-    }
 
-    /* ==============================
-       STRUTTURA PRINCIPALE
-       ============================== */
+      touch-action: manipulation;
+    }
 
     body {
       position: fixed;
@@ -44,7 +47,6 @@
 
       display: grid;
 
-      /* TOPBAR / CONTENUTO / NAV */
       grid-template-rows:
         45px
         minmax(0, 1fr)
@@ -52,9 +54,9 @@
     }
 
 
-    /* ==============================
-       BARRA SUPERIORE
-       ============================== */
+    /* =========================
+       TOP BAR
+       ========================= */
 
     #topbar {
       display: flex;
@@ -76,14 +78,13 @@
 
     #date {
       font-size: 14px;
-
       opacity: 0.7;
     }
 
 
-    /* ==============================
-       AREA CENTRALE
-       ============================== */
+    /* =========================
+       CONTENUTO
+       ========================= */
 
     #content {
       position: relative;
@@ -95,16 +96,10 @@
       background: #05080d;
     }
 
-
-    /* ==============================
-       PAGINE
-       ============================== */
-
     .page {
       display: none;
 
       position: absolute;
-
       inset: 0;
 
       width: 100%;
@@ -119,9 +114,9 @@
     }
 
 
-    /* ==============================
+    /* =========================
        ADS-B
-       ============================== */
+       ========================= */
 
     #aircraft {
       background: #05080d;
@@ -139,13 +134,12 @@
     }
 
 
-    /* ==============================
-       PLACEHOLDER RADAR / METEO
-       ============================== */
+    /* =========================
+       PLACEHOLDER
+       ========================= */
 
     .placeholder {
       text-align: center;
-
       font-size: 26px;
     }
 
@@ -160,9 +154,9 @@
     }
 
 
-    /* ==============================
-       NAVIGAZIONE INFERIORE
-       ============================== */
+    /* =========================
+       NAV
+       ========================= */
 
     #nav {
       display: flex;
@@ -207,6 +201,56 @@
       background: #263241;
     }
 
+
+    /* =========================
+       SCHERMATA AVVIO
+       ========================= */
+
+    #startup {
+
+      position: fixed;
+
+      inset: 0;
+
+      z-index: 99999;
+
+      display: flex;
+
+      flex-direction: column;
+
+      align-items: center;
+      justify-content: center;
+
+      background: #080b10;
+
+      cursor: pointer;
+
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    #startupIcon {
+
+      font-size: 54px;
+
+      margin-bottom: 18px;
+    }
+
+    #startupTitle {
+
+      font-size: 28px;
+
+      font-weight: bold;
+
+      margin-bottom: 10px;
+    }
+
+    #startupText {
+
+      font-size: 16px;
+
+      opacity: 0.65;
+    }
+
   </style>
 
 </head>
@@ -215,9 +259,32 @@
 <body>
 
 
-  <!-- ==============================
+  <!-- =========================
+       SCHERMATA DI AVVIO
+       ========================= -->
+
+  <div id="startup"
+       onclick="startDashboard()">
+
+    <div id="startupIcon">
+      ▶
+    </div>
+
+    <div id="startupTitle">
+      AVVIA DASHBOARD
+    </div>
+
+    <div id="startupText">
+      Tocca lo schermo
+    </div>
+
+  </div>
+
+
+
+  <!-- =========================
        TOP BAR
-       ============================== -->
+       ========================= -->
 
   <div id="topbar">
 
@@ -233,9 +300,9 @@
 
 
 
-  <!-- ==============================
+  <!-- =========================
        CONTENUTO
-       ============================== -->
+       ========================= -->
 
   <div id="content">
 
@@ -246,7 +313,7 @@
          class="page active">
 
       <iframe
-        src="https://globe.adsb.fi/"
+        src="https://globe.adsb.fi/?SiteLat=38.27&SiteLon=16.30&centerReceiver&zoom=7&hideSideBar"
         allowfullscreen>
       </iframe>
 
@@ -295,9 +362,9 @@
 
 
 
-  <!-- ==============================
+  <!-- =========================
        NAVIGAZIONE
-       ============================== -->
+       ========================= -->
 
   <div id="nav">
 
@@ -329,21 +396,15 @@
 
 
 
-  <!-- ==============================
-       JAVASCRIPT
-       ============================== -->
-
   <script>
 
-
-    /* ------------------------------
+    /* =========================
        OROLOGIO
-       ------------------------------ */
+       ========================= */
 
     function updateClock() {
 
       const now = new Date();
-
 
       document.getElementById("clock").textContent =
         now.toLocaleTimeString(
@@ -353,7 +414,6 @@
             minute: "2-digit"
           }
         );
-
 
       document.getElementById("date").textContent =
         now.toLocaleDateString(
@@ -377,14 +437,74 @@
 
 
 
-    /* ------------------------------
+    /* =========================
+       AVVIO DASHBOARD
+       ========================= */
+
+    function startDashboard() {
+
+      /*
+       * Il tocco dell'utente permette a
+       * Keep Silk Open di avviare
+       * l'audio silenzioso.
+       *
+       * Nello stesso momento proviamo
+       * ad attivare il fullscreen.
+       */
+
+      const element =
+        document.documentElement;
+
+
+      try {
+
+        if (element.requestFullscreen) {
+
+          element.requestFullscreen();
+
+        }
+
+        else if (element.webkitRequestFullscreen) {
+
+          element.webkitRequestFullscreen();
+
+        }
+
+      }
+
+      catch (error) {
+
+        /*
+         * Se Silk non supporta
+         * il fullscreen continuiamo
+         * normalmente.
+         */
+
+        console.log(
+          "Fullscreen non disponibile",
+          error
+        );
+
+      }
+
+
+      /*
+       * Nascondiamo la schermata iniziale.
+       */
+
+      document.getElementById(
+        "startup"
+      ).style.display = "none";
+
+    }
+
+
+
+    /* =========================
        CAMBIO PAGINA
-       ------------------------------ */
+       ========================= */
 
     function showPage(id, button) {
-
-
-      /* Nasconde tutte le pagine */
 
       document
         .querySelectorAll(".page")
@@ -394,14 +514,10 @@
         );
 
 
-      /* Mostra quella selezionata */
-
       document
         .getElementById(id)
         .classList.add("active");
 
-
-      /* Rimuove active dai pulsanti */
 
       document
         .querySelectorAll("#nav button")
@@ -411,12 +527,9 @@
         );
 
 
-      /* Evidenzia il pulsante */
-
       button.classList.add("active");
 
     }
-
 
   </script>
 
