@@ -1,539 +1,1496 @@
 <!DOCTYPE html>
 <html lang="it">
-
 <head>
-  <meta charset="UTF-8">
-
-  <meta name="viewport"
-        content="width=device-width,
-                 initial-scale=1.0,
-                 maximum-scale=1.0,
-                 user-scalable=no">
-
-  <title>Echo Dashboard</title>
-
-  <!-- KEEP SILK OPEN -->
-  <script defer
-    src="https://dagammla.gitlab.io/keep-silk-open/keep.js">
-  </script>
-
-  <style>
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-
-      width: 100%;
-      height: 100%;
-
-      overflow: hidden;
-
-      background: #080b10;
-      color: white;
-
-      font-family: Arial, sans-serif;
-
-      touch-action: manipulation;
-    }
-
-    body {
-      position: fixed;
-      inset: 0;
-
-      display: grid;
-
-      grid-template-rows:
-        45px
-        minmax(0, 1fr)
-        60px;
-    }
-
-
-    /* =========================
-       TOP BAR
-       ========================= */
-
-    #topbar {
-      display: flex;
-
-      align-items: center;
-      justify-content: space-between;
-
-      padding: 0 16px;
-
-      background: #10151d;
-
-      z-index: 100;
-    }
-
-    #clock {
-      font-size: 23px;
-      font-weight: bold;
-    }
-
-    #date {
-      font-size: 14px;
-      opacity: 0.7;
-    }
-
-
-    /* =========================
-       CONTENUTO
-       ========================= */
-
-    #content {
-      position: relative;
-
-      min-height: 0;
-
-      overflow: hidden;
-
-      background: #05080d;
-    }
-
-    .page {
-      display: none;
-
-      position: absolute;
-      inset: 0;
-
-      width: 100%;
-      height: 100%;
-    }
-
-    .page.active {
-      display: flex;
-
-      align-items: center;
-      justify-content: center;
-    }
-
-
-    /* =========================
-       ADS-B
-       ========================= */
-
-    #aircraft {
-      background: #05080d;
-    }
-
-    #aircraft iframe {
-      position: absolute;
-
-      inset: 0;
-
-      width: 100%;
-      height: 100%;
-
-      border: 0;
-    }
-
-
-    /* =========================
-       PLACEHOLDER
-       ========================= */
-
-    .placeholder {
-      text-align: center;
-      font-size: 26px;
-    }
-
-    .placeholder small {
-      display: block;
-
-      margin-top: 8px;
-
-      font-size: 15px;
-
-      opacity: 0.6;
-    }
-
-
-    /* =========================
-       NAV
-       ========================= */
-
-    #nav {
-      display: flex;
-
-      width: 100%;
-      height: 60px;
-
-      background: #10151d;
-
-      z-index: 1000;
-    }
-
-    #nav button {
-      flex: 1;
-
-      height: 60px;
-
-      margin: 0;
-      padding: 0;
-
-      border: 0;
-
-      background: #10151d;
-
-      color: #aaa;
-
-      font-size: 16px;
-      font-weight: bold;
-
-      cursor: pointer;
-
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    #nav button.active {
-      color: white;
-
-      background: #1b2430;
-    }
-
-    #nav button:active {
-      background: #263241;
-    }
-
-
-    /* =========================
-       SCHERMATA AVVIO
-       ========================= */
-
-    #startup {
-
-      position: fixed;
-
-      inset: 0;
-
-      z-index: 99999;
-
-      display: flex;
-
-      flex-direction: column;
-
-      align-items: center;
-      justify-content: center;
-
-      background: #080b10;
-
-      cursor: pointer;
-
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    #startupIcon {
-
-      font-size: 54px;
-
-      margin-bottom: 18px;
-    }
-
-    #startupTitle {
-
-      font-size: 28px;
-
-      font-weight: bold;
-
-      margin-bottom: 10px;
-    }
-
-    #startupText {
-
-      font-size: 16px;
-
-      opacity: 0.65;
-    }
-
-  </style>
-
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width,
+               initial-scale=1.0,
+               maximum-scale=1.0,
+               user-scalable=no">
+
+<title>Echo Station</title>
+
+<!-- KEEP SILK OPEN -->
+<script defer src="https://dagammla.gitlab.io/keep-silk-open/keep.js"></script>
+
+<style>
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #020805;
+  color: #79ff9b;
+  font-family: Arial, sans-serif;
+  touch-action: manipulation;
+}
+
+body {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  grid-template-rows: 40px minmax(0,1fr) 56px;
+}
+
+/* ---------- TOP ---------- */
+
+#topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  background: #06100b;
+  border-bottom: 1px solid #1d6b37;
+  z-index: 20;
+}
+
+#title {
+  font-size: 15px;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+#timebox {
+  text-align: right;
+}
+
+#clock {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+#date {
+  font-size: 9px;
+  opacity: .65;
+}
+
+/* ---------- CONTENT ---------- */
+
+#content {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.page {
+  display: none;
+  position: absolute;
+  inset: 0;
+}
+
+.page.active {
+  display: block;
+}
+
+/* ---------- NAV ---------- */
+
+#nav {
+  display: flex;
+  background: #06100b;
+  border-top: 1px solid #1d6b37;
+  z-index: 30;
+}
+
+#nav button {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  color: #568c65;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+#nav button.active {
+  color: #8cffaa;
+  background: #0b1c12;
+}
+
+/* ==========================
+   RADAR AEREI
+   ========================== */
+
+#radarPage {
+  background:
+    radial-gradient(circle at center,
+    #07160d 0%,
+    #020805 70%);
+}
+
+#radarCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+#radarStatus {
+  position: absolute;
+  left: 8px;
+  bottom: 5px;
+  font-size: 9px;
+  opacity: .75;
+  pointer-events: none;
+}
+
+#aircraftInfo {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  width: 185px;
+  padding: 8px;
+  display: none;
+
+  background: rgba(1,10,5,.92);
+  border: 1px solid #43bd65;
+
+  font-family: monospace;
+  font-size: 11px;
+  line-height: 1.35;
+
+  z-index: 5;
+}
+
+/* ==========================
+   METEO
+   ========================== */
+
+#weatherPage {
+  background: #030a07;
+}
+
+.weather-layout {
+  display: grid;
+  grid-template-columns: 64% 36%;
+  width: 100%;
+  height: 100%;
+}
+
+#weatherRadar {
+  position: relative;
+  overflow: hidden;
+  background: #06110c;
+}
+
+#radarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#radarTime {
+  position: absolute;
+  left: 7px;
+  bottom: 6px;
+  padding: 3px 6px;
+  background: rgba(0,0,0,.65);
+  color: white;
+  font-size: 10px;
+}
+
+#weatherData {
+  padding: 9px;
+  background: #07110c;
+  overflow: hidden;
+}
+
+#temperature {
+  font-size: 43px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+#weatherDescription {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #b3ffc3;
+}
+
+.weatherRow {
+  margin-top: 8px;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+#hourly {
+  margin-top: 10px;
+  border-top: 1px solid #205d31;
+  padding-top: 6px;
+  font-family: monospace;
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+/* ==========================
+   SPAZIO
+   ========================== */
+
+#spacePage {
+  background:
+    radial-gradient(circle at 60% 40%,
+    #07131c,
+    #010405 70%);
+}
+
+.space-layout {
+  display: grid;
+  grid-template-columns: 67% 33%;
+  height: 100%;
+}
+
+#earthCanvas {
+  width: 100%;
+  height: 100%;
+}
+
+#spaceInfo {
+  padding: 9px;
+  font-family: monospace;
+  font-size: 11px;
+  line-height: 1.55;
+  border-left: 1px solid #1d6b37;
+}
+
+.spaceTitle {
+  font-size: 17px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.spaceSection {
+  margin-top: 10px;
+  padding-top: 7px;
+  border-top: 1px solid #174b28;
+}
+
+/* ==========================
+   STARTUP
+   ========================== */
+
+#startup {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  background:
+    radial-gradient(circle,
+    #0b2012,
+    #010503 75%);
+}
+
+#startupIcon {
+  font-size: 55px;
+  margin-bottom: 15px;
+}
+
+#startupTitle {
+  font-size: 27px;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+#startupText {
+  margin-top: 9px;
+  font-size: 13px;
+  opacity: .65;
+}
+
+</style>
 </head>
-
 
 <body>
 
+<!-- START -->
 
-  <!-- =========================
-       SCHERMATA DI AVVIO
-       ========================= -->
+<div id="startup" onclick="startDashboard()">
+  <div id="startupIcon">◎</div>
+  <div id="startupTitle">ECHO STATION</div>
+  <div id="startupText">TOCCA PER AVVIARE</div>
+</div>
 
-  <div id="startup"
-       onclick="startDashboard()">
 
-    <div id="startupIcon">
-      ▶
+<!-- TOP -->
+
+<div id="topbar">
+
+  <div id="title">
+    SIDERO STATION
+  </div>
+
+  <div id="timebox">
+    <div id="clock">--:--</div>
+    <div id="date">---</div>
+  </div>
+
+</div>
+
+
+<!-- CONTENT -->
+
+<div id="content">
+
+
+<!-- ======================
+     RADAR
+     ====================== -->
+
+<div id="radarPage" class="page active">
+
+  <canvas id="radarCanvas"></canvas>
+
+  <div id="radarStatus">
+    ADS-B.FI • RANGE 200 KM • SIDERO
+  </div>
+
+  <div id="aircraftInfo"></div>
+
+</div>
+
+
+<!-- ======================
+     METEO
+     ====================== -->
+
+<div id="weatherPage" class="page">
+
+  <div class="weather-layout">
+
+    <div id="weatherRadar">
+
+      <img id="radarImage">
+
+      <div id="radarTime">
+        RADAR
+      </div>
+
     </div>
 
-    <div id="startupTitle">
-      AVVIA DASHBOARD
-    </div>
+    <div id="weatherData">
 
-    <div id="startupText">
-      Tocca lo schermo
+      <div id="temperature">
+        --°
+      </div>
+
+      <div id="weatherDescription">
+        Caricamento...
+      </div>
+
+      <div class="weatherRow">
+        💧 <span id="rainProbability">--</span>%<br>
+        💨 <span id="windSpeed">--</span> km/h<br>
+        💦 <span id="humidity">--</span>%
+      </div>
+
+      <div id="hourly">
+        ---
+      </div>
+
     </div>
 
   </div>
 
+</div>
 
 
-  <!-- =========================
-       TOP BAR
-       ========================= -->
+<!-- ======================
+     SPAZIO
+     ====================== -->
 
-  <div id="topbar">
+<div id="spacePage" class="page">
 
-    <div id="clock">
-      --:--
-    </div>
+  <div class="space-layout">
 
-    <div id="date">
-      ---
-    </div>
+    <canvas id="earthCanvas"></canvas>
 
-  </div>
+    <div id="spaceInfo">
 
+      <div class="spaceTitle">
+        ISS
+      </div>
 
+      LAT
+      <span id="issLat">--</span>°<br>
 
-  <!-- =========================
-       CONTENUTO
-       ========================= -->
+      LON
+      <span id="issLon">--</span>°<br>
 
-  <div id="content">
+      ALT
+      <span id="issAlt">--</span> km<br>
 
+      VEL
+      <span id="issVel">--</span> km/h
 
-    <!-- AEREI -->
+      <div class="spaceSection">
 
-    <div id="aircraft"
-         class="page active">
+        ☀ ALBA
+        <span id="sunrise">--</span><br>
 
-      <iframe
-        src="https://globe.adsb.fi/?SiteLat=38.27&SiteLon=16.30&centerReceiver&zoom=7&hideSideBar"
-        allowfullscreen>
-      </iframe>
+        ☀ TRAMONTO
+        <span id="sunset">--</span>
 
-    </div>
+      </div>
 
+      <div class="spaceSection">
 
+        ☾ <span id="moonPhase">--</span><br>
 
-    <!-- RADAR -->
-
-    <div id="radar"
-         class="page">
-
-      <div class="placeholder">
-
-        🌧️ RADAR
-
-        <small>
-          Radar meteo
-        </small>
+        LUNA
+        <span id="moonIllumination">--</span>%
 
       </div>
 
     </div>
 
-
-
-    <!-- METEO -->
-
-    <div id="weather"
-         class="page">
-
-      <div class="placeholder">
-
-        ☀️ METEO
-
-        <small>
-          Previsioni meteo
-        </small>
-
-      </div>
-
-    </div>
-
-
   </div>
 
+</div>
 
 
-  <!-- =========================
-       NAVIGAZIONE
-       ========================= -->
-
-  <div id="nav">
-
-    <button
-      class="active"
-      onclick="showPage('aircraft', this)">
-
-      ✈️ AEREI
-
-    </button>
+</div>
 
 
-    <button
-      onclick="showPage('radar', this)">
+<!-- NAV -->
 
-      🌧️ RADAR
+<div id="nav">
 
-    </button>
+  <button class="active"
+          onclick="showPage('radarPage',this)">
+    ✈ RADAR
+  </button>
 
+  <button
+          onclick="showPage('weatherPage',this)">
+    🌦 METEO
+  </button>
 
-    <button
-      onclick="showPage('weather', this)">
+  <button
+          onclick="showPage('spacePage',this)">
+    🛰 SPAZIO
+  </button>
 
-      ☀️ METEO
-
-    </button>
-
-  </div>
-
-
-
-  <script>
-
-    /* =========================
-       OROLOGIO
-       ========================= */
-
-    function updateClock() {
-
-      const now = new Date();
-
-      document.getElementById("clock").textContent =
-        now.toLocaleTimeString(
-          "it-IT",
-          {
-            hour: "2-digit",
-            minute: "2-digit"
-          }
-        );
-
-      document.getElementById("date").textContent =
-        now.toLocaleDateString(
-          "it-IT",
-          {
-            weekday: "short",
-            day: "numeric",
-            month: "short"
-          }
-        ).toUpperCase();
-
-    }
+</div>
 
 
-    updateClock();
+<script>
 
-    setInterval(
-      updateClock,
-      1000
+/* =====================================
+   CONFIG
+   ===================================== */
+
+const LAT = 38.27;
+const LON = 16.30;
+
+const RADAR_RANGE_KM = 200;
+
+/*
+ ADS-B.fi usa miglia nautiche.
+ 200 km ≈ 108 NM.
+*/
+const ADSB_RANGE_NM = 110;
+
+
+/* =====================================
+   CLOCK
+   ===================================== */
+
+function updateClock(){
+
+  const now = new Date();
+
+  document.getElementById("clock").textContent =
+    now.toLocaleTimeString(
+      "it-IT",
+      {
+        hour:"2-digit",
+        minute:"2-digit"
+      }
     );
 
-
-
-    /* =========================
-       AVVIO DASHBOARD
-       ========================= */
-
-    function startDashboard() {
-
-      /*
-       * Il tocco dell'utente permette a
-       * Keep Silk Open di avviare
-       * l'audio silenzioso.
-       *
-       * Nello stesso momento proviamo
-       * ad attivare il fullscreen.
-       */
-
-      const element =
-        document.documentElement;
-
-
-      try {
-
-        if (element.requestFullscreen) {
-
-          element.requestFullscreen();
-
-        }
-
-        else if (element.webkitRequestFullscreen) {
-
-          element.webkitRequestFullscreen();
-
-        }
-
+  document.getElementById("date").textContent =
+    now.toLocaleDateString(
+      "it-IT",
+      {
+        weekday:"short",
+        day:"numeric",
+        month:"short"
       }
+    ).toUpperCase();
 
-      catch (error) {
+}
 
-        /*
-         * Se Silk non supporta
-         * il fullscreen continuiamo
-         * normalmente.
-         */
+updateClock();
 
-        console.log(
-          "Fullscreen non disponibile",
-          error
-        );
-
-      }
+setInterval(updateClock,1000);
 
 
-      /*
-       * Nascondiamo la schermata iniziale.
-       */
+/* =====================================
+   START / FULLSCREEN
+   ===================================== */
 
-      document.getElementById(
-        "startup"
-      ).style.display = "none";
+function startDashboard(){
+
+  const el = document.documentElement;
+
+  try {
+
+    if(el.requestFullscreen)
+      el.requestFullscreen();
+
+    else if(el.webkitRequestFullscreen)
+      el.webkitRequestFullscreen();
+
+  } catch(e){}
+
+  document.getElementById("startup").style.display="none";
+
+  resizeCanvases();
+
+  loadAircraft();
+  loadWeather();
+  loadRainRadar();
+  loadISS();
+  loadAstronomy();
+
+}
+
+
+/* =====================================
+   PAGE NAVIGATION
+   ===================================== */
+
+function showPage(id,button){
+
+  document.querySelectorAll(".page")
+    .forEach(p=>p.classList.remove("active"));
+
+  document.getElementById(id)
+    .classList.add("active");
+
+  document.querySelectorAll("#nav button")
+    .forEach(b=>b.classList.remove("active"));
+
+  button.classList.add("active");
+
+  resizeCanvases();
+
+}
+
+
+/* =====================================
+   RADAR CANVAS
+   ===================================== */
+
+const radarCanvas =
+  document.getElementById("radarCanvas");
+
+const radarCtx =
+  radarCanvas.getContext("2d");
+
+let aircraft = [];
+
+let sweepAngle = 0;
+
+
+/* distanza/bearing */
+
+function aircraftPosition(lat,lon){
+
+  const R = 6371;
+
+  const p1 = LAT*Math.PI/180;
+  const p2 = lat*Math.PI/180;
+
+  const dp =
+    (lat-LAT)*Math.PI/180;
+
+  const dl =
+    (lon-LON)*Math.PI/180;
+
+  const a =
+    Math.sin(dp/2)**2 +
+    Math.cos(p1)*
+    Math.cos(p2)*
+    Math.sin(dl/2)**2;
+
+  const distance =
+    2*R*Math.atan2(
+      Math.sqrt(a),
+      Math.sqrt(1-a)
+    );
+
+  const y =
+    Math.sin(dl)*Math.cos(p2);
+
+  const x =
+    Math.cos(p1)*Math.sin(p2) -
+    Math.sin(p1)*
+    Math.cos(p2)*
+    Math.cos(dl);
+
+  const bearing =
+    (Math.atan2(y,x)*180/Math.PI+360)%360;
+
+  return {
+    distance,
+    bearing
+  };
+
+}
+
+
+/* disegno radar */
+
+function drawRadar(){
+
+  const w = radarCanvas.width;
+  const h = radarCanvas.height;
+
+  radarCtx.clearRect(0,0,w,h);
+
+  const cx = w/2;
+  const cy = h/2;
+
+  const radius =
+    Math.min(w,h)*0.46;
+
+
+  /* cerchi */
+
+  radarCtx.strokeStyle =
+    "rgba(80,255,120,.25)";
+
+  radarCtx.lineWidth = 1;
+
+  for(let i=1;i<=4;i++){
+
+    radarCtx.beginPath();
+
+    radarCtx.arc(
+      cx,
+      cy,
+      radius*i/4,
+      0,
+      Math.PI*2
+    );
+
+    radarCtx.stroke();
+
+  }
+
+
+  /* croce */
+
+  radarCtx.beginPath();
+
+  radarCtx.moveTo(cx-radius,cy);
+  radarCtx.lineTo(cx+radius,cy);
+
+  radarCtx.moveTo(cx,cy-radius);
+  radarCtx.lineTo(cx,cy+radius);
+
+  radarCtx.stroke();
+
+
+  /* range labels */
+
+  radarCtx.fillStyle =
+    "rgba(120,255,150,.55)";
+
+  radarCtx.font = "9px monospace";
+
+  radarCtx.fillText(
+    "50",
+    cx+radius*.25+3,
+    cy-3
+  );
+
+  radarCtx.fillText(
+    "100",
+    cx+radius*.5+3,
+    cy-3
+  );
+
+  radarCtx.fillText(
+    "150",
+    cx+radius*.75+3,
+    cy-3
+  );
+
+  radarCtx.fillText(
+    "200 KM",
+    cx+radius-38,
+    cy-3
+  );
+
+
+  /* cardinali */
+
+  radarCtx.fillStyle="#79ff9b";
+
+  radarCtx.font="11px monospace";
+
+  radarCtx.fillText("N",cx-3,cy-radius+12);
+  radarCtx.fillText("S",cx-3,cy+radius-5);
+  radarCtx.fillText("W",cx-radius+5,cy-4);
+  radarCtx.fillText("E",cx+radius-12,cy-4);
+
+
+  /* sweep */
+
+  const angle =
+    sweepAngle*Math.PI/180;
+
+  const grad =
+    radarCtx.createLinearGradient(
+      cx,
+      cy,
+      cx+Math.sin(angle)*radius,
+      cy-Math.cos(angle)*radius
+    );
+
+  grad.addColorStop(
+    0,
+    "rgba(70,255,110,0)"
+  );
+
+  grad.addColorStop(
+    1,
+    "rgba(70,255,110,.55)"
+  );
+
+  radarCtx.strokeStyle=grad;
+  radarCtx.lineWidth=2;
+
+  radarCtx.beginPath();
+
+  radarCtx.moveTo(cx,cy);
+
+  radarCtx.lineTo(
+    cx+Math.sin(angle)*radius,
+    cy-Math.cos(angle)*radius
+  );
+
+  radarCtx.stroke();
+
+
+  /* SIDERO */
+
+  radarCtx.fillStyle="#b5ffc5";
+
+  radarCtx.beginPath();
+
+  radarCtx.arc(
+    cx,
+    cy,
+    4,
+    0,
+    Math.PI*2
+  );
+
+  radarCtx.fill();
+
+
+  /* AEREI */
+
+  aircraft.forEach(ac=>{
+
+    if(
+      ac.lat == null ||
+      ac.lon == null
+    ) return;
+
+    const p =
+      aircraftPosition(
+        ac.lat,
+        ac.lon
+      );
+
+    if(
+      p.distance >
+      RADAR_RANGE_KM
+    ) return;
+
+    const r =
+      p.distance /
+      RADAR_RANGE_KM *
+      radius;
+
+    const a =
+      p.bearing*
+      Math.PI/180;
+
+    const x =
+      cx +
+      Math.sin(a)*r;
+
+    const y =
+      cy -
+      Math.cos(a)*r;
+
+
+    radarCtx.fillStyle="#8cffaa";
+
+    radarCtx.beginPath();
+
+    radarCtx.arc(
+      x,
+      y,
+      3,
+      0,
+      Math.PI*2
+    );
+
+    radarCtx.fill();
+
+
+    /* direzione */
+
+    if(ac.track != null){
+
+      const t =
+        ac.track*
+        Math.PI/180;
+
+      radarCtx.beginPath();
+
+      radarCtx.moveTo(x,y);
+
+      radarCtx.lineTo(
+        x+Math.sin(t)*11,
+        y-Math.cos(t)*11
+      );
+
+      radarCtx.strokeStyle="#8cffaa";
+      radarCtx.stroke();
 
     }
 
 
+    /* callsign */
 
-    /* =========================
-       CAMBIO PAGINA
-       ========================= */
+    const label =
+      (ac.flight || ac.r || ac.hex || "")
+      .trim();
 
-    function showPage(id, button) {
+    radarCtx.font="9px monospace";
 
-      document
-        .querySelectorAll(".page")
-        .forEach(
-          page =>
-            page.classList.remove("active")
-        );
+    radarCtx.fillText(
+      label,
+      x+5,
+      y-4
+    );
 
-
-      document
-        .getElementById(id)
-        .classList.add("active");
+  });
 
 
-      document
-        .querySelectorAll("#nav button")
-        .forEach(
-          btn =>
-            btn.classList.remove("active")
-        );
+  sweepAngle =
+    (sweepAngle+1)%360;
+
+  requestAnimationFrame(
+    drawRadar
+  );
+
+}
 
 
-      button.classList.add("active");
+/* =====================================
+   ADS-B DATA
+   ===================================== */
+
+async function loadAircraft(){
+
+  try{
+
+    const url =
+      `https://opendata.adsb.fi/api/v3/lat/${LAT}/lon/${LON}/dist/${ADSB_RANGE_NM}`;
+
+    const response =
+      await fetch(url);
+
+    const data =
+      await response.json();
+
+    aircraft =
+      data.ac || [];
+
+    document.getElementById(
+      "radarStatus"
+    ).textContent =
+      `ADS-B.FI • ${aircraft.length} TARGETS • RANGE 200 KM • SIDERO`;
+
+  }
+
+  catch(e){
+
+    document.getElementById(
+      "radarStatus"
+    ).textContent =
+      "ADS-B DATA OFFLINE";
+
+  }
+
+}
+
+setInterval(
+  loadAircraft,
+  5000
+);
+
+
+/* =====================================
+   METEO
+   ===================================== */
+
+function weatherText(code){
+
+  if(code===0)
+    return "SERENO";
+
+  if(code<=3)
+    return "NUVOLOSO";
+
+  if(code<=48)
+    return "NEBBIA";
+
+  if(code<=67)
+    return "PIOGGIA";
+
+  if(code<=77)
+    return "NEVE";
+
+  if(code<=82)
+    return "ROVESCI";
+
+  if(code>=95)
+    return "TEMPORALE";
+
+  return "VARIABILE";
+
+}
+
+
+async function loadWeather(){
+
+  try{
+
+    const url =
+      `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&hourly=temperature_2m,precipitation_probability&forecast_hours=8&timezone=Europe%2FRome`;
+
+    const r =
+      await fetch(url);
+
+    const d =
+      await r.json();
+
+
+    document.getElementById(
+      "temperature"
+    ).textContent =
+      Math.round(
+        d.current.temperature_2m
+      )+"°";
+
+
+    document.getElementById(
+      "weatherDescription"
+    ).textContent =
+      weatherText(
+        d.current.weather_code
+      );
+
+
+    document.getElementById(
+      "windSpeed"
+    ).textContent =
+      Math.round(
+        d.current.wind_speed_10m
+      );
+
+
+    document.getElementById(
+      "humidity"
+    ).textContent =
+      d.current.relative_humidity_2m;
+
+
+    document.getElementById(
+      "rainProbability"
+    ).textContent =
+      d.hourly.precipitation_probability[0] ?? "--";
+
+
+    let html="";
+
+    for(
+      let i=0;
+      i<Math.min(5,d.hourly.time.length);
+      i++
+    ){
+
+      const hour =
+        new Date(
+          d.hourly.time[i]
+        ).getHours()
+        .toString()
+        .padStart(2,"0");
+
+      html +=
+        `${hour}:00  ${Math.round(d.hourly.temperature_2m[i])}°  ☂${d.hourly.precipitation_probability[i]}%<br>`;
 
     }
 
-  </script>
+    document.getElementById(
+      "hourly"
+    ).innerHTML=html;
 
+  }
+
+  catch(e){
+
+    document.getElementById(
+      "weatherDescription"
+    ).textContent=
+      "METEO OFFLINE";
+
+  }
+
+}
+
+setInterval(
+  loadWeather,
+  600000
+);
+
+
+/* =====================================
+   RAINVIEWER RADAR
+   ===================================== */
+
+let rainFrames=[];
+let rainIndex=0;
+
+async function loadRainRadar(){
+
+  try{
+
+    const r =
+      await fetch(
+        "https://api.rainviewer.com/public/weather-maps.json"
+      );
+
+    const d =
+      await r.json();
+
+    rainFrames =
+      d.radar.past.slice(-6);
+
+    updateRainFrame(d.host);
+
+    setInterval(
+      ()=>{
+        rainIndex =
+          (rainIndex+1)%
+          rainFrames.length;
+
+        updateRainFrame(d.host);
+      },
+      1200
+    );
+
+  }
+
+  catch(e){
+
+    document.getElementById(
+      "radarTime"
+    ).textContent=
+      "RADAR OFFLINE";
+
+  }
+
+}
+
+
+function updateRainFrame(host){
+
+  if(!rainFrames.length)
+    return;
+
+  const frame =
+    rainFrames[rainIndex];
+
+  /*
+   RainViewer permette tile
+   coordinate-centered.
+  */
+
+  const url =
+    `${host}${frame.path}/512/6/${LAT}/${LON}/2/1_1.png`;
+
+  document.getElementById(
+    "radarImage"
+  ).src=url;
+
+  const t =
+    new Date(
+      frame.time*1000
+    );
+
+  document.getElementById(
+    "radarTime"
+  ).textContent =
+    "RADAR " +
+    t.toLocaleTimeString(
+      "it-IT",
+      {
+        hour:"2-digit",
+        minute:"2-digit"
+      }
+    );
+
+}
+
+
+/* =====================================
+   ISS
+   ===================================== */
+
+const earthCanvas =
+  document.getElementById(
+    "earthCanvas"
+  );
+
+const earthCtx =
+  earthCanvas.getContext("2d");
+
+let issData=null;
+
+
+async function loadISS(){
+
+  try{
+
+    const r =
+      await fetch(
+        "https://api.wheretheiss.at/v1/satellites/25544"
+      );
+
+    issData =
+      await r.json();
+
+
+    document.getElementById(
+      "issLat"
+    ).textContent =
+      issData.latitude.toFixed(1);
+
+
+    document.getElementById(
+      "issLon"
+    ).textContent =
+      issData.longitude.toFixed(1);
+
+
+    document.getElementById(
+      "issAlt"
+    ).textContent =
+      Math.round(
+        issData.altitude
+      );
+
+
+    document.getElementById(
+      "issVel"
+    ).textContent =
+      Math.round(
+        issData.velocity
+      ).toLocaleString("it-IT");
+
+
+    drawEarth();
+
+  }
+
+  catch(e){}
+
+}
+
+setInterval(
+  loadISS,
+  10000
+);
+
+
+/* =====================================
+   EARTH / ISS MAP
+   ===================================== */
+
+function drawEarth(){
+
+  const w =
+    earthCanvas.width;
+
+  const h =
+    earthCanvas.height;
+
+  earthCtx.clearRect(
+    0,0,w,h
+  );
+
+
+  /* bordo mondo */
+
+  earthCtx.strokeStyle =
+    "rgba(100,255,140,.55)";
+
+  earthCtx.strokeRect(
+    8,
+    8,
+    w-16,
+    h-16
+  );
+
+
+  /* griglia */
+
+  earthCtx.strokeStyle =
+    "rgba(100,255,140,.15)";
+
+  for(let lon=-120;lon<=120;lon+=60){
+
+    const x =
+      8 +
+      (lon+180)/360*
+      (w-16);
+
+    earthCtx.beginPath();
+
+    earthCtx.moveTo(
+      x,8
+    );
+
+    earthCtx.lineTo(
+      x,h-8
+    );
+
+    earthCtx.stroke();
+
+  }
+
+
+  for(let lat=-60;lat<=60;lat+=30){
+
+    const y =
+      8 +
+      (90-lat)/180*
+      (h-16);
+
+    earthCtx.beginPath();
+
+    earthCtx.moveTo(
+      8,y
+    );
+
+    earthCtx.lineTo(
+      w-8,y
+    );
+
+    earthCtx.stroke();
+
+  }
+
+
+  /* Siderno */
+
+  const sx =
+    8 +
+    (LON+180)/360*
+    (w-16);
+
+  const sy =
+    8 +
+    (90-LAT)/180*
+    (h-16);
+
+  earthCtx.fillStyle="#ffffff";
+
+  earthCtx.beginPath();
+
+  earthCtx.arc(
+    sx,
+    sy,
+    3,
+    0,
+    Math.PI*2
+  );
+
+  earthCtx.fill();
+
+  earthCtx.font=
+    "9px monospace";
+
+  earthCtx.fillText(
+    "SID",
+    sx+5,
+    sy
+  );
+
+
+  /* ISS */
+
+  if(issData){
+
+    const x =
+      8 +
+      (issData.longitude+180)/360*
+      (w-16);
+
+    const y =
+      8 +
+      (90-issData.latitude)/180*
+      (h-16);
+
+    earthCtx.fillStyle=
+      "#79ff9b";
+
+    earthCtx.beginPath();
+
+    earthCtx.arc(
+      x,
+      y,
+      5,
+      0,
+      Math.PI*2
+    );
+
+    earthCtx.fill();
+
+    earthCtx.font=
+      "11px monospace";
+
+    earthCtx.fillText(
+      "ISS",
+      x+7,
+      y-4
+    );
+
+  }
+
+}
+
+
+/* =====================================
+   SUN / MOON
+   ===================================== */
+
+async function loadAstronomy(){
+
+  try{
+
+    const r =
+      await fetch(
+        `https://api.sunrise-sunset.org/v2?lat=${LAT}&lng=${LON}&tz=Europe%2FRome`
+      );
+
+    const d =
+      await r.json();
+
+
+    function hhmm(v){
+
+      if(!v)
+        return "--";
+
+      return new Date(v)
+        .toLocaleTimeString(
+          "it-IT",
+          {
+            hour:"2-digit",
+            minute:"2-digit"
+          }
+        );
+
+    }
+
+
+    document.getElementById(
+      "sunrise"
+    ).textContent =
+      hhmm(d.sunrise);
+
+
+    document.getElementById(
+      "sunset"
+    ).textContent =
+      hhmm(d.sunset);
+
+
+    document.getElementById(
+      "moonPhase"
+    ).textContent =
+      d.moon_phase || "--";
+
+
+    document.getElementById(
+      "moonIllumination"
+    ).textContent =
+      d.moon_illumination != null
+      ? Math.round(
+          d.moon_illumination
+        )
+      : "--";
+
+  }
+
+  catch(e){}
+
+}
+
+
+/* =====================================
+   RESIZE
+   ===================================== */
+
+function resizeCanvases(){
+
+  radarCanvas.width =
+    radarCanvas.clientWidth;
+
+  radarCanvas.height =
+    radarCanvas.clientHeight;
+
+  earthCanvas.width =
+    earthCanvas.clientWidth;
+
+  earthCanvas.height =
+    earthCanvas.clientHeight;
+
+  drawEarth();
+
+}
+
+window.addEventListener(
+  "resize",
+  resizeCanvases
+);
+
+
+/* AVVIO ANIMAZIONE */
+
+resizeCanvases();
+
+drawRadar();
+
+</script>
 
 </body>
-
 </html>
