@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width,initial-scale=1">
+
+  <title>OpenSky Test</title>
+
+  <style>
+    body {
+      background: #020805;
+      color: #79ff9b;
+      font-family: monospace;
+      padding: 20px;
+      font-size: 18px;
+    }
+
+    #result {
+      margin-top: 20px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+
+<body>
+
+<h2>OPEN SKY TEST</h2>
+
+<div id="status">
+  Connessione...
+</div>
+
+<div id="result"></div>
+
+<script>
+
+const url =
+  "https://opensky-network.org/api/states/all" +
+  "?lamin=36.4" +
+  "&lomin=13.9" +
+  "&lamax=40.1" +
+  "&lomax=18.7";
+
+async function testOpenSky() {
+
+  const status =
+    document.getElementById("status");
+
+  const result =
+    document.getElementById("result");
+
+  try {
+
+    const response =
+      await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(
+        "HTTP " + response.status
+      );
+    }
+
+    const data =
+      await response.json();
+
+    const states =
+      data.states || [];
+
+    status.textContent =
+      "✓ FUNZIONA — " +
+      states.length +
+      " AEREI RICEVUTI";
+
+    let text = "";
+
+    states.forEach(function(ac) {
+
+      const callsign =
+        (ac[1] || "NO CALLSIGN").trim();
+
+      const lon = ac[5];
+      const lat = ac[6];
+      const altitude = ac[7];
+      const velocity = ac[9];
+      const heading = ac[10];
+
+      text +=
+        callsign +
+        "\nLAT " + lat +
+        "  LON " + lon +
+        "\nALT " + altitude +
+        " m  VEL " +
+        Math.round(velocity || 0) +
+        " m/s" +
+        "\nHDG " + heading +
+        "°\n\n";
+    });
+
+    result.textContent = text;
+
+  }
+
+  catch(error) {
+
+    status.textContent =
+      "✗ ERRORE";
+
+    result.textContent =
+      error.name +
+      ": " +
+      error.message;
+
+  }
+
+}
+
+testOpenSky();
+
+</script>
+
+</body>
+</html>
