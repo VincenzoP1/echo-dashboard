@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
+
+<title>AvioADSB Test</title>
+
+<style>
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  color: #65ff87;
+  font-family: monospace;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.panel {
+  width: 90%;
+  text-align: center;
+}
+
+h1 {
+  font-size: 26px;
+  letter-spacing: 3px;
+  margin-bottom: 25px;
+}
+
+.status {
+  font-size: 22px;
+  margin: 15px;
+}
+
+.number {
+  font-size: 48px;
+  font-weight: bold;
+}
+
+.small {
+  font-size: 16px;
+  opacity: 0.7;
+  margin-top: 25px;
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="panel">
+
+  <h1>AVIO ADS-B TEST</h1>
+
+  <div
+    id="status"
+    class="status"
+  >
+    CONNESSIONE...
+  </div>
+
+  <div class="status">
+    AEREI NEL FEED
+  </div>
+
+  <div
+    id="total"
+    class="number"
+  >
+    --
+  </div>
+
+  <div class="status">
+    ENTRO 200 KM DA SIDERNO
+  </div>
+
+  <div
+    id="local"
+    class="number"
+  >
+    --
+  </div>
+
+  <div
+    id="info"
+    class="small"
+  >
+  </div>
+
+</div>
+
+
+<script>
+
+/* Siderno */
+
+var CENTER_LAT = 38.27;
+var CENTER_LON = 16.30;
+
+var MAX_DISTANCE = 200;
+
+
+/*
+  Distanza fra due coordinate
+  con formula Haversine.
+*/
+
+function distanceKm(lat1, lon1, lat2, lon2) {
+
+  var R = 6371;
+
+  var dLat =
+    (lat2 - lat1) *
+    Math.PI / 180;
+
+  var dLon =
+    (lon2 - lon1) *
+    Math.PI / 180;
+
+  var a =
+    Math.sin(dLat / 2) *
+    Math.sin(dLat / 2) +
+
+    Math.cos(
+      lat1 * Math.PI / 180
+    ) *
+
+    Math.cos(
+      lat2 * Math.PI / 180
+    ) *
+
+    Math.sin(dLon / 2) *
+    Math.sin(dLon / 2);
+
+  var c =
+    2 *
+    Math.atan2(
+      Math.sqrt(a),
+      Math.sqrt(1 - a)
+    );
+
+  return R * c;
+}
+
+
+/*
+  Caricamento feed
+*/
+
+function loadAircraft() {
+
+  var status =
+    document.getElementById("status");
+
+  status.innerHTML =
+    "CONNESSIONE...";
+
+
+  fetch(
+    "https://avioadsb.org/live/data/aircraft.json"
+  )
+
+  .then(function(response) {
+
+    if (!response.ok) {
+
+      throw new Error(
+        "HTTP " + response.status
+      );
+
+    }
+
+    return response.json();
+
+  })
+
+  .then(function(data) {
+
+    var aircraft =
+      data.aircraft || [];
+
+    var local = [];
+
+    for (
+      var i = 0;
+      i < aircraft.length;
+      i++
+    ) {
+
+      var plane = aircraft[i];
+
+      /*
+        Alcuni record non hanno
+        ancora lat/lon.
+      */
+
+      if (
+        typeof plane.lat !== "number" ||
+        typeof plane.lon !== "number"
+      ) {
+        continue;
+      }
+
+
+      var distance =
+        distanceKm(
+          CENTER_LAT,
+          CENTER_LON,
+          plane.lat,
+          plane.lon
+        );
+
+
+      if (
+        distance <= MAX_DISTANCE
+      ) {
+
+        plane.distance_km =
+          distance;
+
+        local.push(plane);
+
+      }
+
+    }
+
+
+    status.innerHTML =
+      "✓ CONNESSIONE OK";
+
+    document
+      .getElementById("total")
+      .innerHTML =
+      aircraft.length;
+
+    document
+      .getElementById("local")
+      .innerHTML =
+      local.length;
+
+
+    /*
+      Mostra eventuali callsign
+      trovati attorno a Siderno.
+    */
+
+    var callsigns = [];
+
+    for (
+      var j = 0;
+      j < local.length;
+      j++
+    ) {
+
+      if (local[j].flight) {
+
+        callsigns.push(
+          local[j].flight.trim()
+        );
+
+      }
+
+    }
+
+
+    if (callsigns.length > 0) {
+
+      document
+        .getElementById("info")
+        .innerHTML =
+        callsigns.join(" • ");
+
+    } else {
+
+      document
+        .getElementById("info")
+        .innerHTML =
+        "Nessun velivolo nel feed entro 200 km";
+
+    }
+
+  })
+
+  .catch(function(error) {
+
+    status.innerHTML =
+      "✗ FAILED TO FETCH";
+
+    document
+      .getElementById("info")
+      .innerHTML =
+      error.name +
+      ": " +
+      error.message;
+
+  });
+
+}
+
+
+/*
+  Prima lettura
+*/
+
+loadAircraft();
+
+
+/*
+  Aggiornamento ogni 15 secondi.
+*/
+
+setInterval(
+  loadAircraft,
+  15000
+);
+
+</script>
+
+</body>
+</html>
