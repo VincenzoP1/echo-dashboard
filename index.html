@@ -183,14 +183,7 @@ html, body {
 
   z-index: 0;
 
-  opacity: .17;
-
-  filter:
-    grayscale(1)
-    sepia(.25)
-    hue-rotate(75deg)
-    brightness(.40)
-    contrast(1.5);
+  opacity: 1;
 
   pointer-events: none;
 }
@@ -210,8 +203,8 @@ html, body {
   background:
     radial-gradient(
       circle at center,
-      rgba(0,0,0,.05),
-      rgba(0,8,3,.42)
+      rgba(0,0,0,.02),
+      rgba(0,5,2,.15)
     );
 
   pointer-events: none;
@@ -1164,46 +1157,177 @@ return r.json();
 
 var radarStyle =
 JSON.parse(
-JSON.stringify(style)
+  JSON.stringify(style)
 );
 
 
-radarStyle =
-stripMapStyle(
-radarStyle,
-true
-);
+/*
+  Nasconde qualunque layer che non ci interessa.
+*/
+
+for (
+  var r = 0;
+  r < radarStyle.layers.length;
+  r++
+) {
+
+  var layer =
+    radarStyle.layers[r];
+
+  var id =
+    (layer.id || "")
+    .toLowerCase();
+
+
+  /*
+    Nessun testo.
+  */
+
+  if (
+    layer.layout &&
+    layer.layout["text-field"]
+  ) {
+
+    layer.layout.visibility =
+      "none";
+
+  }
+
+
+  /*
+    Nascondiamo tutto ciò che sicuramente
+    non vogliamo sul radar.
+  */
+
+  if (
+    id.indexOf("road") >= 0 ||
+    id.indexOf("street") >= 0 ||
+    id.indexOf("highway") >= 0 ||
+    id.indexOf("motorway") >= 0 ||
+    id.indexOf("building") >= 0 ||
+    id.indexOf("poi") >= 0 ||
+    id.indexOf("rail") >= 0 ||
+    id.indexOf("transit") >= 0 ||
+    id.indexOf("airport") >= 0 ||
+    id.indexOf("aeroway") >= 0 ||
+    id.indexOf("label") >= 0 ||
+    id.indexOf("place") >= 0
+  ) {
+
+    if (!layer.layout) {
+      layer.layout = {};
+    }
+
+    layer.layout.visibility =
+      "none";
+
+  }
+
+}
+
+
+/*
+  Modifichiamo i colori dei layer
+  geografici rimasti.
+*/
+
+for (
+  var c = 0;
+  c < radarStyle.layers.length;
+  c++
+) {
+
+  var l =
+    radarStyle.layers[c];
+
+  if (!l.paint) {
+    continue;
+  }
+
+
+  /*
+    Sfondo / mare quasi nero
+  */
+
+  if (
+    l.type === "background"
+  ) {
+
+    l.paint["background-color"] =
+      "#020705";
+
+  }
+
+
+  /*
+    Poligoni geografici:
+    terra verde nerissima.
+  */
+
+  if (
+    l.type === "fill"
+  ) {
+
+    l.paint["fill-color"] =
+      "#0b1c10";
+
+    l.paint["fill-opacity"] =
+      0.75;
+
+  }
+
+
+  /*
+    Linee rimaste:
+    coste/confini molto tenui.
+  */
+
+  if (
+    l.type === "line"
+  ) {
+
+    l.paint["line-color"] =
+      "#1d5530";
+
+    l.paint["line-opacity"] =
+      0.42;
+
+    l.paint["line-width"] =
+      1;
+
+  }
+
+}
 
 
 radarMap =
 new maplibregl.Map({
 
-container:
-"radarMap",
+  container:
+    "radarMap",
 
-style:
-radarStyle,
+  style:
+    radarStyle,
 
-center:
-[LON, LAT],
+  center:
+    [LON, LAT],
 
-zoom:
-6.3,
+  zoom:
+    6.3,
 
-bearing:
-0,
+  bearing:
+    0,
 
-pitch:
-0,
+  pitch:
+    0,
 
-interactive:
-false,
+  interactive:
+    false,
 
-attributionControl:
-false
+  attributionControl:
+    false
 
 });
-
 
 /*
   WEATHER MAP
